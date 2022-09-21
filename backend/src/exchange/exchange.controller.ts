@@ -6,7 +6,8 @@ export class ExchangeController {
   constructor(private exchangeService: ExchangeService) {}
 
   @Get()
-  getHello(@Query() query) {
-    return this.exchangeService.getHello(query.amount);
+  async getHello(@Query() query): Promise<any> {
+    const amount = parseFloat(query.amount);
+    return await this.exchangeService.getCandidateExchange(amount);
   }
 }
