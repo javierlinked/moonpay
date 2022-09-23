@@ -18,21 +18,9 @@ describe('ExchangeService', () => {
       [100, 1],
       [200, 2],
       [300, 3],
+      [400, 4],
     ],
   };
-  //   exchange1: [
-  //     [0.5, 1],
-  //     [0.3, 2],
-  //   ],
-  //   exchange2: [
-  //     [1, 1],
-  //     [1.5, 2],
-  //   ],
-  //   exchange3: [
-  //     [1, 1],
-  //     [4, 2],
-  //   ],
-  // };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -46,12 +34,12 @@ describe('ExchangeService', () => {
     expect(service).toBeDefined();
   });
 
-  it.only('should calculate average price in books', () => {
-    const res = service.calculateAveragePrice2(books, 2);
+  it('should calculate average price in books', () => {
+    const res = service.getAveragePerExchange(books, 3);
     const expected = {
-      exchange1: 23.333333333333332,
-      exchange2: 2.3333333333333335,
-      exchange3: 233.33333333333334,
+      exchange1: 15,
+      exchange2: 1.5,
+      exchange3: 150,
     };
     expect(res).toEqual(expected);
   });

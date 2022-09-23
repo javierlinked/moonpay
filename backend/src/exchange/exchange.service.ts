@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import fetch from 'node-fetch';
+import { Injectable, Logger } from '@nestjs/common';
+import fetch, { Response } from 'node-fetch';
 
 @Injectable()
 export class ExchangeService {
   exchanges: Record<string, string>;
+  log: Logger = new Logger('ExchangeService');
 
   constructor() {
     this.exchanges = {
@@ -14,27 +15,41 @@ export class ExchangeService {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getCandidateExchange(amount: number): Promise<any> {
     // retrieve books from exchanges
-    const books = await this.getBooks();
-    const avg = this.calculateAveragePrice(books, amount);
-    console.log(avg);
-    // calculate average price
-    // return exchange with lowest price
-    // return this.books;
+    const books = await this.fetchBooks();
+    const averages = this.getAveragePerExchange(books, amount);
+
+    const cheaperExchange = Object.entries(averages).reduce(
+      (previous, current) => {
+        return current[1] < previous[1] ? current : previous;
+      },
+    );
 
     return {
       btcAmount: amount,
-      usdAmount: 10000,
-      exchange: 'coinbase',
+      usdAmount: cheaperExchange[1],
+      exchange: cheaperExchange[0],
     };
   }
 
-  async getBooks(): Promise<Record<string, []>> {
+  /**
+   * Get books from exchanges.
+   * @returns A dictionary with the books from exchanges.
+   */
+  async fetchBooks(): Promise<Record<string, []>> {
     const result: Record<string, []> = {};
     for (const key in this.exchanges) {
-      const response = await fetch(this.exchanges[key]);
+      let response: Response;
+      try {
+        response = await fetch(this.exchanges[key]);
+      } catch (error) {
+        // gracefully handle error and continue
+        this.log.warn(`Error fetching ${key} exchange`);
+        this.log.warn(error);
+        continue;
+      }
+
       const jsonResult = await response.json();
 
       if (key === 'kraken') {
@@ -47,80 +62,29 @@ export class ExchangeService {
   }
 
   /**
-   * For each exchange we loop through the "asks" table and we "purchase" bitcoin until the accumulated one is more than
-   * the amount required to buy. Then we find the average price for these orders.
-   *
-   * @param amount
-   * @returns {*[]}
+   * We loop exchanges "ask" tables and we calculate per exchange the average price for the amount of bitcoin we want to buy.
+   * @param books books from exchanges
+   * @param amount amount of bitcoin we want to buy
+   * @returns A dictionary with the average price per exchange.
    */
-  calculateAveragePrice(
+  getAveragePerExchange(
     books: Record<string, []>,
     amount: number,
   ): Record<string, number> {
-    const avgBuyPrices: Record<string, number> = {};
+    const result: Record<string, number> = {};
     for (const key in books) {
       let btcAccumulated = 0.0;
-      let usdAvgPrice = 0.0;
+      let usdAccumulated = 0.0;
 
-      for (let asksLooper = 0; asksLooper < books[key].length; asksLooper++) {
-        const price = parseFloat(books[key][asksLooper][0]);
-        const amountSelling = parseFloat(books[key][asksLooper][1]);
-
-        if (btcAccumulated >= amount) {
-          avgBuyPrices[key] = usdAvgPrice / asksLooper;
-          break;
-        }
-
-        btcAccumulated += amountSelling;
-        usdAvgPrice += price;
-      }
-    }
-
-    return avgBuyPrices;
-  }
-
-  calculateAveragePrice1(
-    books: Record<string, []>,
-    amount: number,
-  ): Record<string, number> {
-    const result: Record<string, number> = {};
-
-    for (const key in books) {
-      let btcAmount = 0;
-      let usdAmount = 0;
       let i = 0;
-      while (btcAmount < amount) {
-        const order = books[key][i]; // [price, amount]
-        const orderBtcAmount = parseFloat(order[1]); // amount
-        const orderUsdAmount = parseFloat(order[0]) * orderBtcAmount; // price * amount
-        btcAmount += orderBtcAmount; // accumulate btc amount
-        usdAmount += orderUsdAmount; // accumulate usd amount
+      while (i < books[key].length && btcAccumulated < amount) {
+        const price = parseFloat(books[key][i][0]);
+        const amountBTCInOrder = parseFloat(books[key][i][1]);
+        btcAccumulated += amountBTCInOrder;
+        usdAccumulated += price;
         i++;
       }
-      result[key] = usdAmount / btcAmount; // average price
-    }
-    return result;
-  }
-
-  calculateAveragePrice2(
-    books: Record<string, []>,
-    amount: number,
-  ): Record<string, number> {
-    const result: Record<string, number> = {};
-
-    for (const key in books) {
-      let btcAmount = 0;
-      let usdAmount = 0;
-      let i = 0;
-      while (btcAmount < amount) {
-        const order = books[key][i]; // [price, amount]
-        const orderBtcAmount = parseFloat(order[1]); // amount
-        const orderUsdAmount = parseFloat(order[0]) * orderBtcAmount; // price * amount
-        btcAmount += orderBtcAmount; // accumulate btc amount
-        usdAmount += orderUsdAmount; // accumulate usd amount
-        i++;
-      }
-      result[key] = usdAmount / btcAmount; // average price
+      result[key] = usdAccumulated / i;
     }
 
     return result;
