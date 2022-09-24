@@ -1,5 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import { NextSeo } from "next-seo";
+import useSWR from "swr";
 
 import Currency from "lib/components/Currency";
 
@@ -13,28 +14,40 @@ export type Token = {
 };
 
 const Home = () => {
-  const token: Token = {
-    id: "1",
-    name: "Bitcoin",
-    symbol: "BTC",
-    supportsTestMode: true,
-    isSupportedInUS: true,
-  };
+  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  // retrieve the list of tokens from the API
+  const { data, error } = useSWR(
+    "https://api.moonpay.com/v3/currencies",
+    fetcher
+  );
+
+  if (error) return <div>failed to load</div>;
+  if (!data) return <div>loading...</div>;
+
   return (
-    <Flex
-      direction="column"
-      alignItems="center"
-      justifyContent="center"
-      minHeight="70vh"
-      gap={4}
-      mb={8}
-      w="full"
-      border="1px solid"
-    >
-      <NextSeo title="Home" />
-      <Currency token={token} />
+    <Flex direction="column" justifyContent="center">
+      <NextSeo title="Moonpay" />
+
+      <h1>Supported Currencies</h1>
+      {data.map((token: Token) => (
+        <Currency token={token} key={token.id} />
+      ))}
     </Flex>
   );
 };
+
+// export const getStaticProps: GetStaticProps = async () => {
+//   const data = await fetcher("https://api.moonpay.com/v3/currencies");
+//   if (!data) {
+//     return {
+//       notFound: true,
+//     };
+//   }
+//   return {
+//     props: {
+//       initialCurrencies: data,
+//     },
+//   };
+// };
 
 export default Home;

@@ -6,7 +6,8 @@ export interface CurrencyProps {
   token: Token;
 }
 
-const Currency: React.FC<CurrencyProps> = (token) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Currency: React.FC<CurrencyProps> = ({ token, ...props }) => {
   return (
     <chakra.div id="{token.id}">
       <h3>{token.name}</h3>

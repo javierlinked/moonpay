@@ -6,9 +6,9 @@ import {
   Link as ChakraLink,
   useColorMode,
   Flex,
-} from "@chakra-ui/react";
-import { NextSeo } from "next-seo";
-import Link from "next/link";
+} from '@chakra-ui/react';
+import { NextSeo } from 'next-seo';
+import Link from 'next/link';
 
 const Page404 = () => {
   const { colorMode } = useColorMode();
@@ -38,7 +38,7 @@ const Page404 = () => {
           </Text>
           <Link href="/" passHref>
             <Button
-              backgroundColor={colorMode === "light" ? "gray.300" : "teal.500"}
+              backgroundColor={colorMode === 'light' ? 'gray.300' : 'teal.500'}
               size="sm"
             >
               Let&apos;s Head Back
