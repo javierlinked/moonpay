@@ -22,10 +22,6 @@ const Home = () => {
 
   if (error) return <div>failed to load</div>;
   if (!data) return <div>loading...</div>;
-
-  // grid-template-columns: repeat(3, 1fr);
-  // grid-auto-rows: 1fr;
-
   return (
     <Flex
       display="grid"
@@ -34,7 +30,7 @@ const Home = () => {
       gridAutoRows="1fr"
     >
       <NextSeo title="Moonpay" />
-      <h1>Supported Currencies</h1>
+
       {data.map((token: Token) => (
         <Currency token={token} key={token.id} />
       ))}
