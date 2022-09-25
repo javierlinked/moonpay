@@ -7,10 +7,9 @@ import Currency from "lib/components/Currency";
 export type Token = {
   id: string;
   name: string;
-  symbol: string;
+  code: string;
   supportsTestMode: boolean;
   isSupportedInUS: boolean;
-  hidden?: boolean;
 };
 
 const Home = () => {
@@ -24,10 +23,17 @@ const Home = () => {
   if (error) return <div>failed to load</div>;
   if (!data) return <div>loading...</div>;
 
-  return (
-    <Flex direction="column" justifyContent="center">
-      <NextSeo title="Moonpay" />
+  // grid-template-columns: repeat(3, 1fr);
+  // grid-auto-rows: 1fr;
 
+  return (
+    <Flex
+      display="grid"
+      maxWidth="800px"
+      gridTemplateColumns="repeat(3, 1fr)"
+      gridAutoRows="1fr"
+    >
+      <NextSeo title="Moonpay" />
       <h1>Supported Currencies</h1>
       {data.map((token: Token) => (
         <Currency token={token} key={token.id} />
@@ -35,19 +41,5 @@ const Home = () => {
     </Flex>
   );
 };
-
-// export const getStaticProps: GetStaticProps = async () => {
-//   const data = await fetcher("https://api.moonpay.com/v3/currencies");
-//   if (!data) {
-//     return {
-//       notFound: true,
-//     };
-//   }
-//   return {
-//     props: {
-//       initialCurrencies: data,
-//     },
-//   };
-// };
 
 export default Home;
