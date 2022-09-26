@@ -7,7 +7,6 @@ import {
   useColorMode,
   Flex,
 } from "@chakra-ui/react";
-import { NextSeo } from "next-seo";
 import Link from "next/link";
 
 const Page404 = () => {
@@ -15,8 +14,6 @@ const Page404 = () => {
 
   return (
     <Flex minHeight="70vh" direction="column" justifyContent="center">
-      <NextSeo title="404 Not Found" />
-
       <Text textAlign="center" fontSize="xs" color="gray">
         <ChakraLink
           href="https://stories.freepik.com/web"

@@ -12,8 +12,13 @@ const Currency: React.FC<CurrencyProps> = ({ token, ...props }) => {
     <chakra.div id="{token.id}" border="1px solid">
       <h3>{token.name}</h3>
       <p>Symbol: {token.code}</p>
-      <p>USA: {token.isSupportedInUS}</p>
-      <p>Test Mode: {token.supportsTestMode}</p>
+      <p>
+        USA: <chakra.span>{token.isSupportedInUS ? "✅" : "❌"}</chakra.span>
+      </p>
+      <p>
+        Test Mode:{" "}
+        <chakra.span>{token.supportsTestMode ? "✅" : "❌"}</chakra.span>
+      </p>
     </chakra.div>
   );
 };
