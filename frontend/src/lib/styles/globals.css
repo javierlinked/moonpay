@@ -1,1 +1,54 @@
-/* Global Styling here */
+
+.tokenList {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    max-width: 800px;
+}
+
+@media screen and (min-width: 600px) {
+    .tokenList {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 1fr;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .tokenList {
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: 1fr;
+    }
+}
+
+.currency {
+    margin: 0.5rem;
+    padding: 1.5rem;
+    text-align: left;
+    color: #000000;
+    text-decoration: none;
+    border: 1px solid #eaeaea;
+    border-radius: 0.5rem;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    max-width: 300px;
+}
+
+@media screen and (min-width: 600px) {
+    .currency {
+        margin: 1rem;
+    }
+}
+
+.currency:hover,
+.currency:focus,
+.currency:active {
+    color: #55278B;
+    border-color: #55278B;
+}
+
+.currency h3 {
+    font-size: 1.2rem;
+}
+
+.currency p {
+    font-size: 1rem;
+    line-height: 1.5;
+}

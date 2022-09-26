@@ -9,7 +9,7 @@ export interface CurrencyProps {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Currency: React.FC<CurrencyProps> = ({ token, ...props }) => {
   return (
-    <chakra.div id="{token.id}" border="1px solid">
+    <chakra.div id="{token.id}" className="currency">
       <h3>{token.name}</h3>
       <p>Symbol: {token.code}</p>
       <p>
