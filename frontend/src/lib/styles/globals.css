@@ -24,10 +24,8 @@
     padding: 1.5rem;
     text-align: left;
     color: #000000;
-    text-decoration: none;
     border: 1px solid #eaeaea;
     border-radius: 0.5rem;
-    transition: color 0.15s ease, border-color 0.15s ease;
     max-width: 300px;
 }
 
@@ -40,8 +38,8 @@
 .currency:hover,
 .currency:focus,
 .currency:active {
-    color: #55278B;
-    border-color: #55278B;
+    color: blueviolet;
+    border-color: blueviolet;
 }
 
 .currency h3 {

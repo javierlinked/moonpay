@@ -1,6 +1,6 @@
 import { chakra } from "@chakra-ui/react";
 
-import type { Token } from "lib/pages/home";
+import type { Token } from "lib/types/types";
 
 export interface CurrencyProps {
   token: Token;

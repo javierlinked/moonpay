@@ -5,7 +5,6 @@
     "plugin:@next/next/recommended"
   ],
   "rules": {
-    "react/prop-types": "off",
-    "no-console": "off"
+    "react/prop-types": "off"
   }
 }

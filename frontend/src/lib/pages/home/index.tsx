@@ -3,37 +3,23 @@ import { useEffect, useState } from "react";
 
 import Currency from "lib/components/Currency";
 import { sortArrayOfObjects } from "lib/types/functions";
+import type { Token } from "lib/types/types";
 
-export type Token = {
-  id: string;
-  name: string;
-  code: string;
-  supportsTestMode: boolean;
-  isSupportedInUS: boolean;
-};
-
-const Home = ({ initialData }: { initialData: Token[] }) => {
+function Home({ initialData }: { initialData: Token[] }) {
   const [tokens, setTokens] = useState<Token[]>(initialData);
   const [supportedInUs, setSupportedInUs] = useBoolean(false);
   const [supportsTestMode, setSupportsTestMode] = useBoolean(false);
 
   useEffect(() => {
-    const filtered = tokens.filter((token) => {
-      if (supportedInUs && supportsTestMode) {
-        return token.isSupportedInUS && token.supportsTestMode;
-      }
-      if (supportedInUs) {
-        return token.isSupportedInUS;
-      }
-      if (supportsTestMode) {
-        return token.supportsTestMode;
-      }
-      return true;
+    // filter out tokens when supportedInUs is false or supportsTestMode is false
+    const filtered = initialData.filter((token) => {
+      const filterUS = supportedInUs && !token.isSupportedInUS;
+      const filterTestMode = supportsTestMode && !token.supportsTestMode;
+      return !filterUS && !filterTestMode;
     });
-    const filters = supportedInUs || supportsTestMode;
-    setTokens(filters ? filtered : initialData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [supportedInUs, supportsTestMode]);
+
+    setTokens(filtered);
+  }, [supportedInUs, supportsTestMode, initialData]);
 
   const sortBy = (key: keyof Token) => {
     const sorted = sortArrayOfObjects(tokens, key, "ascending");
@@ -76,7 +62,7 @@ const Home = ({ initialData }: { initialData: Token[] }) => {
       </Flex>
     </>
   );
-};
+}
 
 Home.getInitialProps = async () => {
   const res = await fetch("https://api.moonpay.com/v3/currencies");
